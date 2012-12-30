@@ -1,0 +1,15 @@
+{
+	"name": "photo-mover",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"start": "app.js"
+	},
+	"dependencies": {
+		"nopt": "1.0.x",
+		"exif2": "0.0.1"
+	},
+	"engines": {
+		"node": "0.8.x"
+	}
+}
