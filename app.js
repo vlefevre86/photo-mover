@@ -21,7 +21,7 @@ var canWrite = function canWrite(owner, inGroup, mode) {
 		(mode & 00002); // Anyone can write.
 };
 
-function lookupDate(filePath, fileName, cb) {
+var lookupDate = function lookupDate(filePath, fileName, cb) {
 	// Attempt lookup of EXIF date
 	exif(filePath + fileName, function(err, exifData) {
 		if (err) {
@@ -66,7 +66,7 @@ function lookupDate(filePath, fileName, cb) {
 	});
 }
 
-function movePhoto(originPath, destinationPath, fileName, year, month, day, cb) {
+var movePhoto = function movePhoto(originPath, destinationPath, fileName, year, month, day, cb) {
 	var twoDigitFormat = function twoDigitFormat(num) {
 		if (num < 10) {
 			return '0' + num;
