@@ -1,6 +1,6 @@
 var Queue = function(options, callback) {
 	this.doneCallback = callback;
-	this.concurrentLimit = options.limit || 10;
+	this.concurrentLimit = options.concurrent || 10;
 	this.jobQueue = [];
 	this.errors = [];
 };

@@ -155,7 +155,7 @@ if (args.destination[ args.origin.length - 1 ] !== "/") {
 
 var filesProcessed = 0;
 var files = fs.readdirSync(args.origin);
-var queue = new Queue({ limit: 10 }, function(errors) {
+var queue = new Queue({ concurrent: 10 }, function(errors) {
 	if (errors) {
 		errors.map(function(error, index) {
 			if (error) {
