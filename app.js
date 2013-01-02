@@ -3,6 +3,7 @@ var exif = require('exif2'),
 	nopt = require("nopt"),
 	path = require("path"),
 	Stream = require("stream").Stream,
+	Queue = require("./queue"),
 	knownOpts = { 
 		"origin" : path,
 		"destination" : path,
@@ -21,12 +22,11 @@ var canWrite = function canWrite(owner, inGroup, mode) {
 		(mode & 00002); // Anyone can write.
 };
 
-var lookupDate = function lookupDate(filePath, fileName, cb) {
+function lookupDate(filePath, fileName, cb) {
 	// Attempt lookup of EXIF date
 	exif(filePath + fileName, function(err, exifData) {
 		if (err) {
-			console.error(err);
-			return;
+			return cb(err);
 		}
 		
 		var creationDate;
@@ -59,9 +59,10 @@ var lookupDate = function lookupDate(filePath, fileName, cb) {
 		}
 		
 		if (!creationDate) {
-			console.error("Unable to find valid date in EXIF data or file name for ", fileName);
+			var error = "Unable to find valid date in EXIF data or file name for " + fileName;
+			cb(error);
 		} else {
-			cb(fileName, creationDate.getFullYear(), creationDate.getMonth() + 1, creationDate.getDate());			
+			cb(null, fileName, creationDate.getFullYear(), creationDate.getMonth() + 1, creationDate.getDate());
 		}
 	});
 }
@@ -76,12 +77,10 @@ var movePhoto = function movePhoto(originPath, destinationPath, fileName, year, 
 	
 	// Validate params
 	if (!year || !month || !originPath || !destinationPath) {
-		console.error('movePhoto requires origin path, destination path, year, month.');
-		cb(true);
+		return cb('movePhoto requires origin path, destination path, year, month.');
 	}
 	if (fs.existsSync(destinationPath) === false) {
-		console.error('Destination path is invalid.');
-		cb(true);
+		return cb('Destination path is invalid.');
 	}
 	
 	// Determine new path
@@ -112,8 +111,7 @@ var movePhoto = function movePhoto(originPath, destinationPath, fileName, year, 
 			} else {
 				console.log(originPath + fileName + " moved to " + fullDestinationPath + fileName);
 			}
-			
-			if (cb) { cb(err); }
+			cb(err);
 		}
 	);
 }
@@ -155,18 +153,34 @@ if (args.destination[ args.origin.length - 1 ] !== "/") {
 	args.origin += "/";
 }
 
+var filesProcessed = 0;
 var files = fs.readdirSync(args.origin);
-
-// TODO: Node seems to die due to `ulimit` issues here. Find out a way to deal with this.
-for (var i = 0, iMax = ((files.length > 80)? 80 : files.length), filesProcessed = 0; i < iMax; i++) {
-	if ((/\.(gif|jpg|jpeg|png|psd|mov)$/i).test(files[i])) {
-		lookupDate(args.origin, files[i], function(fileName, year, month, day) {
-			movePhoto(args.origin, args.destination, fileName, year, month, day);
+var queue = new Queue({ concurrent: 10 }, function(errors) {
+	if (errors) {
+		errors.map(function(error, index) {
+			if (error) {
+				console.log("error encountered while processing", files[index], ":", error);
+			}
 		});
-		filesProcessed++;
-	} else {
-		console.log('bad file', files[i]);
 	}
-}
+	console.log(filesProcessed, "files processed.");
+});
 
-console.log(filesProcessed + " files processed.");
+files.forEach(function(fileName) {
+	if ((/\.(gif|jpg|jpeg|png|psd|mov)$/i).test(fileName)) {
+		var runner = function(callback) {
+			lookupDate(args.origin, fileName, function(error, fileName, year, month, day) {
+				if (error) { return callback(error); }
+				movePhoto(args.origin, args.destination, fileName, year, month, day, function(error) {
+					filesProcessed++;
+					callback(error);
+				});
+			});
+		};
+		queue.add(runner);
+	} else {
+		console.log('bad file', fileName);
+	}
+});
+
+queue.start();
