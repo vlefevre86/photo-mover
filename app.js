@@ -116,6 +116,33 @@ var movePhoto = function movePhoto(originPath, destinationPath, fileName, year, 
 	);
 }
 
+function findPictures(startDir, queue) {
+
+	var files = fs.readdirSync(startDir);
+
+	files.forEach(function(fileName) {
+		if ((/\.(gif|jpg|jpeg|png|psd|mov)$/i).test(fileName)) {
+			var runner = function(callback) {
+				lookupDate(startDir, fileName, function(error, fileName, year, month, day) {
+					if (error) { 
+						return callback(error); 
+					}
+					
+					movePhoto(startDir, args.destination, fileName, year, month, day, function(error) {
+						filesProcessed++;
+						callback(error);
+					});
+				});
+			};
+			queue.add(runner);
+		} else if (fs.lstatSync(startDir+ fileName).isDirectory()) {
+			findPictures(startDir+ fileName + "/", queue);
+		} else {
+			console.log('bad file', startDir+ fileName);
+		}
+	});
+}
+
 // START
 // =====
 
@@ -154,33 +181,18 @@ if (args.destination[ args.origin.length - 1 ] !== "/") {
 }
 
 var filesProcessed = 0;
-var files = fs.readdirSync(args.origin);
+
 var queue = new Queue({ concurrent: 10 }, function(errors) {
 	if (errors) {
 		errors.map(function(error, index) {
 			if (error) {
-				console.log("error encountered while processing", files[index], ":", error);
+				console.log("error encountered while processing", index, ":", error);
 			}
 		});
 	}
 	console.log(filesProcessed, "files processed.");
 });
 
-files.forEach(function(fileName) {
-	if ((/\.(gif|jpg|jpeg|png|psd|mov)$/i).test(fileName)) {
-		var runner = function(callback) {
-			lookupDate(args.origin, fileName, function(error, fileName, year, month, day) {
-				if (error) { return callback(error); }
-				movePhoto(args.origin, args.destination, fileName, year, month, day, function(error) {
-					filesProcessed++;
-					callback(error);
-				});
-			});
-		};
-		queue.add(runner);
-	} else {
-		console.log('bad file', fileName);
-	}
-});
+findPictures(args.origin, queue);
 
 queue.start();
