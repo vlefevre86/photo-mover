@@ -92,8 +92,8 @@ var movePhoto = function movePhoto(originPath, destinationPath, fileName, year, 
 	if (fs.existsSync(destinationPath + year) === false) {
 		fs.mkdirSync(destinationPath + year);
 	}
-	if (fs.existsSync(destinationPath + year + "/" + twoDigitFormat(month)) === false) {
-		fs.mkdirSync(destinationPath + year + "/" + twoDigitFormat(month));
+	if (fs.existsSync(destinationPath + year + "/" + twoDigitFormat(month) + "_" + monthNames[month]) === false) {
+		fs.mkdirSync(destinationPath + year + "/" + twoDigitFormat(month) + "_" + monthNames[month]);
 	}
 	
 	
