@@ -12,7 +12,9 @@ var exif = require('exif2'),
 		"o" : ["--origin"],
 		"d" : ["--destination"]
 	},
-	args = nopt(knownOpts, shortHands, process.argv, 2);
+	args = nopt(knownOpts, shortHands, process.argv, 2),
+	monthNames = ["January", "February", "March", "April", "May", "June",
+  	"July", "August", "September", "October", "November", "December"];
 
 
 // canWrite via: https://groups.google.com/d/msg/nodejs/qmZtIwDRSYo/N7xOioUnwjsJ
@@ -84,10 +86,7 @@ var movePhoto = function movePhoto(originPath, destinationPath, fileName, year, 
 	}
 	
 	// Determine new path
-	var fullDestinationPath = destinationPath + year + "/" + twoDigitFormat(month) + "/";
-	if (day) {
-		fullDestinationPath += twoDigitFormat(day) + "/";
-	}
+	var fullDestinationPath = destinationPath + year + "/" + twoDigitFormat(month) + "_" + monthNames[month] + "/";
 	
 	// Verify year, month, day (if needed) folders exist
 	if (fs.existsSync(destinationPath + year) === false) {
@@ -95,9 +94,6 @@ var movePhoto = function movePhoto(originPath, destinationPath, fileName, year, 
 	}
 	if (fs.existsSync(destinationPath + year + "/" + twoDigitFormat(month)) === false) {
 		fs.mkdirSync(destinationPath + year + "/" + twoDigitFormat(month));
-	}
-	if (day && (fs.existsSync(fullDestinationPath) === false)) {
-		fs.mkdirSync(fullDestinationPath);
 	}
 	
 	
