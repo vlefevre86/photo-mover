@@ -33,7 +33,7 @@ function lookupDate(filePath, fileName, cb) {
 		
 		var creationDate;
 		
-		if (exifData["create date") != "0000:00:00 00:00:00"] {
+		if (exifData["create date"] != "0000:00:00 00:00:00") {
 			creationDate = new Date(
 				  exifData["create date"].substr(0, 4) + '/' 
 				+ exifData["create date"].substr(5, 2) + '/' 
