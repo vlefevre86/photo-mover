@@ -33,7 +33,7 @@ function lookupDate(filePath, fileName, cb) {
 		
 		var creationDate;
 		
-		if (exifData["create date"]) {
+		if (exifData["create date") != "0000:00:00 00:00:00"] {
 			creationDate = new Date(
 				  exifData["create date"].substr(0, 4) + '/' 
 				+ exifData["create date"].substr(5, 2) + '/' 
@@ -42,7 +42,16 @@ function lookupDate(filePath, fileName, cb) {
 			console.log('EXIF, creae date', exifData["create date"], fileName, creationDate.getFullYear(), creationDate.getMonth() + 1, creationDate.getDate());
 		}
 		
-		if (!creationDate && exifData["file modification date time"]) {	// If fails, attempt lookup via another EXIF parameter
+		if (!creationDate && exifData["date time original"] != "0000:00:00 00:00:00") {	// If fails, attempt lookup via another EXIF parameter
+			creationDate = new Date(
+				  exifData["date time original"].substr(0, 4) + '/' 
+				+ exifData["date time original"].substr(5, 2) + '/' 
+				+ exifData["date time original"].substr(8, 2)
+			);
+			console.log('EXIF, date time original', exifData["date time original"], fileName, creationDate.getFullYear(), creationDate.getMonth() + 1, creationDate.getDate());
+		}
+
+		if (!creationDate && exifData["file modification date time"] != "0000:00:00 00:00:00") {	// If fails, attempt lookup via another EXIF parameter
 			creationDate = new Date(
 				  exifData["file modification date time"].substr(0, 4) + '/' 
 				+ exifData["file modification date time"].substr(5, 2) + '/' 
