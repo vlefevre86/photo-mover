@@ -39,7 +39,7 @@ function lookupDate(filePath, fileName, cb) {
 				+ exifData["create date"].substr(5, 2) + '/' 
 				+ exifData["create date"].substr(8, 2)
 			);
-			console.log('EXIF', fileName, creationDate.getFullYear(), creationDate.getMonth() + 1, creationDate.getDate());
+			console.log('EXIF, creae date', exifData["create date"], fileName, creationDate.getFullYear(), creationDate.getMonth() + 1, creationDate.getDate());
 		}
 		
 		if (!creationDate && exifData["file modification date time"]) {	// If fails, attempt lookup via another EXIF parameter
@@ -48,7 +48,7 @@ function lookupDate(filePath, fileName, cb) {
 				+ exifData["file modification date time"].substr(5, 2) + '/' 
 				+ exifData["file modification date time"].substr(8, 2)
 			);
-			console.log('EXIF, file mod', fileName, creationDate.getFullYear(), creationDate.getMonth() + 1, creationDate.getDate());
+			console.log('EXIF, file mod', exifData["file modification date time"], fileName, creationDate.getFullYear(), creationDate.getMonth() + 1, creationDate.getDate());
 		}
 		
 		if (!creationDate) {	// If fails, attempt lookup via filename
@@ -86,14 +86,14 @@ var movePhoto = function movePhoto(originPath, destinationPath, fileName, year, 
 	}
 	
 	// Determine new path
-	var fullDestinationPath = destinationPath + year + "/" + twoDigitFormat(month) + "_" + monthNames[month] + "/";
+	var fullDestinationPath = destinationPath + year + "/" + twoDigitFormat(month) + "_" + monthNames[month-1] + "/";
 	
 	// Verify year, month, day (if needed) folders exist
 	if (fs.existsSync(destinationPath + year) === false) {
 		fs.mkdirSync(destinationPath + year);
 	}
-	if (fs.existsSync(destinationPath + year + "/" + twoDigitFormat(month) + "_" + monthNames[month]) === false) {
-		fs.mkdirSync(destinationPath + year + "/" + twoDigitFormat(month) + "_" + monthNames[month]);
+	if (fs.existsSync(destinationPath + year + "/" + twoDigitFormat(month) + "_" + monthNames[month-1]) === false) {
+		fs.mkdirSync(destinationPath + year + "/" + twoDigitFormat(month) + "_" + monthNames[month-1]);
 	}
 	
 	
