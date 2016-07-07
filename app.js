@@ -27,7 +27,7 @@ var canWrite = function canWrite(owner, inGroup, mode) {
 function lookupDate(filePath, fileName, cb) {
 	// Attempt lookup of EXIF date
 	exif(filePath + fileName, function(err, exifData) {
-		if (err) {
+		if (err|| typeof exifData === "undefined") {
 			return cb(err);
 		}
 		
