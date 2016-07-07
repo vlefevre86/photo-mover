@@ -112,7 +112,7 @@ var movePhoto = function movePhoto(originPath, destinationPath, fileName, year, 
 			if (err) {
 				console.log('Move error:', fileName, err);
 			} else {
-				console.log(originPath + fileName + " moved to " + fullDestinationPath + fileName);
+				console.log(originPath + fileName + " moved to " + fullDestinationPath + newFileName);
 			}
 			cb(err);
 		}
