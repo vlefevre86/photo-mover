@@ -35,24 +35,24 @@ function lookupDate(filePath, fileName, cb) {
 		
 		if (typeof exifData["create date"] !== "undefined" && exifData["create date"] != "0000:00:00 00:00:00") {
 			creationDate = new Date(
-				  exifData["create date"].substr(0, 4), 
-				  exifData["create date"].substr(5, 2),
-				  exifData["create date"].substr(8, 2),
-				  exifData["create date"].substr(11, 2),
-				  exifData["create date"].substr(14, 2),
-				  exifData["create date"].substr(17, 2)
+				  exifData["create date"].substr(0, 4) + '/'
+				+ exifData["create date"].substr(5, 2) + '/'
+				+ exifData["create date"].substr(8, 2) + ' '
+				+ exifData["create date"].substr(11, 2) + ':'
+				+ exifData["create date"].substr(14, 2) + ':'
+				+ exifData["create date"].substr(17, 2)
 			);
 			console.log('EXIF, create date', exifData["create date"], fileName, creationDate.getFullYear(), creationDate.getMonth() + 1, creationDate.getDate());
 		}
 		
 		if (typeof exifData["date time original"] !== "undefined" && !creationDate && exifData["date time original"] != "0000:00:00 00:00:00") {	// If fails, attempt lookup via another EXIF parameter
 			creationDate = new Date(
-				  exifData["date time original"].substr(0, 4), 
-				  exifData["date time original"].substr(5, 2), 
-				  exifData["date time original"].substr(8, 2),
-				  exifData["date time original"].substr(11, 2),
-				  exifData["date time original"].substr(14, 2),
-				  exifData["date time original"].substr(17, 2)
+				  exifData["date time original"].substr(0, 4) + '/' 
+				+ exifData["date time original"].substr(5, 2) + '/'
+				+ exifData["date time original"].substr(8, 2) + ' '
+				+ exifData["date time original"].substr(11, 2) + ':'
+				+ exifData["date time original"].substr(14, 2) + ':'
+				+ exifData["date time original"].substr(17, 2)
 			);
 			console.log('EXIF, date time original', exifData["date time original"], fileName, creationDate.getFullYear(), creationDate.getMonth() + 1, creationDate.getDate());
 		}
