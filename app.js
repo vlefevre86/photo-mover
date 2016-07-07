@@ -35,18 +35,24 @@ function lookupDate(filePath, fileName, cb) {
 		
 		if (typeof exifData["create date"] !== "undefined" && exifData["create date"] != "0000:00:00 00:00:00") {
 			creationDate = new Date(
-				  exifData["create date"].substr(0, 4) + '/' 
-				+ exifData["create date"].substr(5, 2) + '/' 
-				+ exifData["create date"].substr(8, 2)
+				  exifData["create date"].substr(0, 4), 
+				  exifData["create date"].substr(5, 2),
+				  exifData["create date"].substr(8, 2),
+				  exifData["create date"].substr(11, 2),
+				  exifData["create date"].substr(14, 2),
+				  exifData["create date"].substr(17, 2)
 			);
 			console.log('EXIF, create date', exifData["create date"], fileName, creationDate.getFullYear(), creationDate.getMonth() + 1, creationDate.getDate());
 		}
 		
 		if (typeof exifData["date time original"] !== "undefined" && !creationDate && exifData["date time original"] != "0000:00:00 00:00:00") {	// If fails, attempt lookup via another EXIF parameter
 			creationDate = new Date(
-				  exifData["date time original"].substr(0, 4) + '/' 
-				+ exifData["date time original"].substr(5, 2) + '/' 
-				+ exifData["date time original"].substr(8, 2)
+				  exifData["date time original"].substr(0, 4), 
+				  exifData["date time original"].substr(5, 2), 
+				  exifData["date time original"].substr(8, 2),
+				  exifData["date time original"].substr(11, 2),
+				  exifData["date time original"].substr(14, 2),
+				  exifData["date time original"].substr(17, 2)
 			);
 			console.log('EXIF, date time original', exifData["date time original"], fileName, creationDate.getFullYear(), creationDate.getMonth() + 1, creationDate.getDate());
 		}
@@ -64,12 +70,12 @@ function lookupDate(filePath, fileName, cb) {
 			var error = "Unable to find valid date in EXIF data or file name for " + fileName;
 			cb(error);
 		} else {
-			cb(null, fileName, creationDate.getFullYear(), creationDate.getMonth() + 1, creationDate.getDate());
+			cb(null, fileName, creationDate.getFullYear(), creationDate.getMonth() + 1, creationDate.getDate(), creationDate.getHours(), creationDate.getMinutes(), creationDate.getSeconds());
 		}
 	});
 }
 
-var movePhoto = function movePhoto(originPath, destinationPath, fileName, year, month, day, cb) {
+var movePhoto = function movePhoto(originPath, destinationPath, fileName, year, month, day, hours, minutes, seconds, cb) {
 	var twoDigitFormat = function twoDigitFormat(num) {
 		if (num < 10) {
 			return '0' + num;
@@ -87,6 +93,7 @@ var movePhoto = function movePhoto(originPath, destinationPath, fileName, year, 
 	
 	// Determine new path
 	var fullDestinationPath = destinationPath + year + "/" + twoDigitFormat(month) + "_" + monthNames[month-1] + "/";
+	var newFileName  =  twoDigitFormat(day) + "-" + twoDigitFormat(month) + "-" + year + "_" + twoDigitFormat(hours) + "." + twoDigitFormat(minutes) + "." + twoDigitFormat(seconds) + "." + fileName.split('.').pop()
 	
 	// Verify year, month, day (if needed) folders exist
 	if (fs.existsSync(destinationPath + year) === false) {
@@ -100,7 +107,7 @@ var movePhoto = function movePhoto(originPath, destinationPath, fileName, year, 
 	// Execute the move	
 	fs.rename(
 		originPath + fileName,
-		fullDestinationPath + fileName,
+		fullDestinationPath + newFileName,
 		function(err) {
 			if (err) {
 				console.log('Move error:', fileName, err);
@@ -119,12 +126,12 @@ function findPictures(startDir, queue) {
 	files.forEach(function(fileName) {
 		if ((/\.(gif|jpg|jpeg|png|psd|mov)$/i).test(fileName)) {
 			var runner = function(callback) {
-				lookupDate(startDir, fileName, function(error, fileName, year, month, day) {
+				lookupDate(startDir, fileName, function(error, fileName, year, month, day, hours, minutes, seconds) {
 					if (error) { 
 						return callback(error); 
 					}
 					
-					movePhoto(startDir, args.destination, fileName, year, month, day, function(error) {
+					movePhoto(startDir, args.destination, fileName, year, month, hours, minutes, seconds, day, function(error) {
 						filesProcessed++;
 						callback(error);
 					});
