@@ -27,13 +27,13 @@ var canWrite = function canWrite(owner, inGroup, mode) {
 function lookupDate(filePath, fileName, cb) {
 	// Attempt lookup of EXIF date
 	exif(filePath + fileName, function(err, exifData) {
-		if (err|| typeof exifData === "undefined") {
+		if (err) {
 			return cb(err);
 		}
 		
 		var creationDate;
 		
-		if (exifData["create date"] != "0000:00:00 00:00:00") {
+		if (typeof exifData["create date"] !== "undefined" && exifData["create date"] != "0000:00:00 00:00:00") {
 			creationDate = new Date(
 				  exifData["create date"].substr(0, 4) + '/' 
 				+ exifData["create date"].substr(5, 2) + '/' 
@@ -42,7 +42,7 @@ function lookupDate(filePath, fileName, cb) {
 			console.log('EXIF, create date', exifData["create date"], fileName, creationDate.getFullYear(), creationDate.getMonth() + 1, creationDate.getDate());
 		}
 		
-		if (!creationDate && exifData["date time original"] != "0000:00:00 00:00:00") {	// If fails, attempt lookup via another EXIF parameter
+		if (typeof exifData["date time original"] !== "undefined" && !creationDate && exifData["date time original"] != "0000:00:00 00:00:00") {	// If fails, attempt lookup via another EXIF parameter
 			creationDate = new Date(
 				  exifData["date time original"].substr(0, 4) + '/' 
 				+ exifData["date time original"].substr(5, 2) + '/' 
