@@ -57,14 +57,14 @@ function lookupDate(filePath, fileName, cb) {
 			console.log('EXIF, date time original', exifData["date time original"], fileName, creationDate.getFullYear(), creationDate.getMonth() + 1, creationDate.getDate());
 		}
 
-		if (!creationDate) {	// If fails, attempt lookup via filename
-			creationDate = new Date(
-				  fileName.substr(0, 4) + '/'
-				+ fileName.substr(5, 2) + '/'
-				+ fileName.substr(8, 2)
-			);
-			console.log('Name:', fileName, creationDate.getFullYear(), creationDate.getMonth() + 1, creationDate.getDate());	
-		}
+		//if (!creationDate) {	// If fails, attempt lookup via filename
+		//	creationDate = new Date(
+		//		  fileName.substr(0, 4) + '/'
+		//		+ fileName.substr(5, 2) + '/'
+		//		+ fileName.substr(8, 2)
+		//	);
+		//	console.log('Name:', fileName, creationDate.getFullYear(), creationDate.getMonth() + 1, creationDate.getDate());	
+		//}
 		
 		if (!creationDate) {
 			var error = "Unable to find valid date in EXIF data or file name for " + fileName;
