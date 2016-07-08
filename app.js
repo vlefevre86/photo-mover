@@ -105,18 +105,26 @@ var movePhoto = function movePhoto(originPath, destinationPath, fileName, year, 
 	
 	
 	// Execute the move	
-	fs.rename(
-		originPath + fileName,
-		fullDestinationPath + newFileName,
-		function(err) {
-			if (err) {
-				console.log('Move error:', fileName, err);
-			} else {
-				console.log(originPath + fileName + " moved to " + fullDestinationPath + newFileName);
-			}
-			cb(err);
-		}
-	);
+	//fs.rename(
+	//	originPath + fileName,
+	//	fullDestinationPath + newFileName,
+	//	function(err) {
+	//		if (err) {
+	//			console.log('Move error:', fileName, err);
+	//		} else {
+	//			console.log(originPath + fileName + " moved to " + fullDestinationPath + newFileName);
+	//		}
+	//		cb(err);
+	//	}
+	//);
+	var is = fs.createReadStream(originPath + fileName);
+	var os = fs.createWriteStream(fullDestinationPath + newFileName);
+	
+	is.pipe(os);
+	is.on('end',function() {
+	    fs.unlinkSync(originPath + fileName);
+	    console.log(originPath + fileName + " moved to " + fullDestinationPath + newFileName);
+	});
 }
 
 function findPictures(startDir, queue) {
