@@ -126,7 +126,7 @@ var movePhoto = function movePhoto(originPath, destinationPath, fileName, year, 
 	//    fs.unlinkSync(originPath + fileName);
 	//    console.log(originPath + fileName + " moved to " + fullDestinationPath + newFileName);
 	//});
-	mv(riginPath + fileName, fullDestinationPath + newFileName, function(err) {
+	mv(originPath + fileName, fullDestinationPath + newFileName, function(err) {
 			if (err) {
 				console.log('Move error:', fileName, err);
 			} else {
