@@ -42,7 +42,7 @@ function lookupDate(filePath, fileName, cb) {
 				+ exifData["create date"].substr(14, 2) + ':'
 				+ exifData["create date"].substr(17, 2)
 			);
-			console.log('EXIF, create date', exifData["create date"], fileName, creationDate.getFullYear(), creationDate.getMonth() + 1, creationDate.getDate());
+			console.log('EXIF, create date :', exifData["create date"], ", Filename :", fileName, "Date :", creationDate.getFullYear(), creationDate.getMonth() + 1, creationDate.getDate(), creationDate.getHours(), creationDate.getMinutes(), creationDate.getSeconds());
 		}
 		
 		if (typeof exifData["date time original"] !== "undefined" && !creationDate && exifData["date time original"] != "0000:00:00 00:00:00") {	// If fails, attempt lookup via another EXIF parameter
@@ -54,7 +54,7 @@ function lookupDate(filePath, fileName, cb) {
 				+ exifData["date time original"].substr(14, 2) + ':'
 				+ exifData["date time original"].substr(17, 2)
 			);
-			console.log('EXIF, date time original', exifData["date time original"], fileName, creationDate.getFullYear(), creationDate.getMonth() + 1, creationDate.getDate());
+			console.log('EXIF, date time original : ', exifData["date time original"], ", Filename :", fileName, "Date :", creationDate.getFullYear(), creationDate.getMonth() + 1, creationDate.getDate(), creationDate.getHours(), creationDate.getMinutes(), creationDate.getSeconds());
 		}
 
 		//if (!creationDate) {	// If fails, attempt lookup via filename
@@ -131,7 +131,7 @@ function findPictures(startDir, queue) {
 						return callback(error); 
 					}
 					
-					movePhoto(startDir, args.destination, fileName, year, month, hours, minutes, seconds, day, function(error) {
+					movePhoto(startDir, args.destination, fileName, year, month, day, hours, minutes, seconds, function(error) {
 						filesProcessed++;
 						callback(error);
 					});
