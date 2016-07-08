@@ -93,7 +93,7 @@ var movePhoto = function movePhoto(originPath, destinationPath, fileName, year, 
 	
 	// Determine new path
 	var fullDestinationPath = destinationPath + year + "/" + twoDigitFormat(month) + "_" + monthNames[month-1] + "/";
-	var newFileName  =  day + "-" + twoDigitFormat(month) + "-" + year + "_" + hours + "." + twoDigitFormat(minutes) + "." + twoDigitFormat(seconds) + "." + fileName.split('.').pop()
+	var newFileName  =  twoDigitFormat(day) + "-" + twoDigitFormat(month) + "-" + year + "_" + twoDigitFormat(hours) + "." + twoDigitFormat(minutes) + "." + twoDigitFormat(seconds) + "." + fileName.split('.').pop()
 	
 	// Verify year, month, day (if needed) folders exist
 	if (fs.existsSync(destinationPath + year) === false) {
