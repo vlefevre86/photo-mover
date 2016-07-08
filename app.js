@@ -1,5 +1,6 @@
 var exif = require('exif2'),
 	fs = require('fs'),
+	mv = require('mv'),
 	nopt = require("nopt"),
 	path = require("path"),
 	Stream = require("stream").Stream,
@@ -117,13 +118,21 @@ var movePhoto = function movePhoto(originPath, destinationPath, fileName, year, 
 	//		cb(err);
 	//	}
 	//);
-	var is = fs.createReadStream(originPath + fileName);
-	var os = fs.createWriteStream(fullDestinationPath + newFileName);
-	
-	is.pipe(os);
-	is.on('end',function() {
-	    fs.unlinkSync(originPath + fileName);
-	    console.log(originPath + fileName + " moved to " + fullDestinationPath + newFileName);
+	//var is = fs.createReadStream(originPath + fileName);
+	//var os = fs.createWriteStream(fullDestinationPath + newFileName);
+	//
+	//is.pipe(os);
+	//is.on('end',function() {
+	//    fs.unlinkSync(originPath + fileName);
+	//    console.log(originPath + fileName + " moved to " + fullDestinationPath + newFileName);
+	//});
+	mv(riginPath + fileName, fullDestinationPath + newFileName, function(err) {
+			if (err) {
+				console.log('Move error:', fileName, err);
+			} else {
+				console.log(originPath + fileName + " moved to " + fullDestinationPath + newFileName);
+			}
+			cb(err);
 	});
 }
 
